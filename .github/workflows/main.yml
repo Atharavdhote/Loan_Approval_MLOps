@@ -1,0 +1,25 @@
+
+name: Loan Approval ML CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build -t loan-approval .
+
+      - name: Run Pytest
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}/models:/app/models" \
+            loan-approval python -m pytest tests/ -v
